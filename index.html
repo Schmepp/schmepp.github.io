@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Schmep - Indie Game Developer</title>
+<link rel="icon" type="image/png" href="favicon.png">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background-color:#ffffff;color:#1a1a1a;display:flex;flex-direction:column;align-items:center;text-align:center;padding:20px;overflow-x:hidden;position:relative}
+canvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:-1}
+.banner{width:100%;max-width:900px;height:auto;margin-top:40px;border-radius:12px}
+.card{background-color:#f9f9f9;width:100%;max-width:750px;padding:35px 25px;margin:25px 0;border-radius:25px;box-shadow:0 4px 20px rgba(0,0,0,0.1);transition:0.4s, transform 0.3s}
+.card:hover{box-shadow:0 12px 35px rgba(0,0,0,0.25);transform:translateY(-8px) scale(1.02)}
+.card h2{font-size:2.2rem;margin-bottom:20px;color:#1a1a1a;position:relative}
+.card h2::after{content:'';width:60px;height:3px;background:#1e90ff;display:block;margin:10px auto 0;border-radius:2px;transition:width 0.3s}
+.card:hover h2::after{width:100px}
+.card p{color:#333333;line-height:1.6;font-size:1.15rem}
+.links{display:flex;flex-wrap:wrap;justify-content:center}
+.links a{color:#1e90ff;text-decoration:none;margin:10px 15px;font-size:1.2rem;padding:14px 28px;border-radius:25px;background-color:#f0f0f0;transition:0.4s, transform 0.3s, box-shadow 0.3s;display:inline-block;box-shadow:0 4px 15px rgba(0,0,0,0.1)}
+.links a:hover{background-color:#1e90ff;color:#ffffff;transform:translateY(-6px) scale(1.08);box-shadow:0 10px 30px rgba(0,0,0,0.3)}
+@media(max-width:600px){.card{padding:25px 15px}.links a{padding:12px 20px;font-size:1rem}}
+</style>
+</head>
+<body>
+<canvas id="bg"></canvas>
+<img src="banner.png" alt="Schmep Banner" class="banner">
+<div class="card" id="aboutCard">
+<h2>About Me</h2>
+<p>Hello! I'm Schmep, an indie game developer passionate about creating engaging and creative games. I focus on designing unique gameplay experiences and experimenting with mechanics that surprise and delight players. I share my work on Itch.io and GitHub, and also post development updates and videos on YouTube. Gaming isn't just what I do — it's my way of storytelling and connecting with players worldwide.</p>
+</div>
+<div class="card links" id="linkCard">
+<a href="https://github.com/Schmepp" target="_blank">GitHub</a>
+<a href="https://schmep.itch.io" target="_blank">Itch.io</a>
+<a href="https://youtube.com/@Schmepster" target="_blank">YouTube</a>
+</div>
+<script>
+const canvas=document.getElementById('bg');
+const ctx=canvas.getContext('2d');
+canvas.width=window.innerWidth;
+canvas.height=window.innerHeight;
+let mouse={x:canvas.width/2,y:canvas.height/2};
+window.addEventListener('mousemove',e=>{mouse.x=e.clientX;mouse.y=e.clientY});
+class Particle{constructor(){this.x=Math.random()*canvas.width;this.y=Math.random()*canvas.height;this.r=Math.random()*2+1.5;this.dx=(Math.random()-0.5)*0.5;this.dy=(Math.random()-0.5)*0.5}move(){this.x+=this.dx;this.y+=this.dy;if(this.x>canvas.width)this.x=0;if(this.x<0)this.x=canvas.width;if(this.y>canvas.height)this.y=0;if(this.y<0)this.y=canvas.height;let dx=this.x-mouse.x;let dy=this.y-mouse.y;let dist=Math.sqrt(dx*dx+dy*dy);if(dist<100){let angle=Math.atan2(dy,dx);this.x+=Math.cos(angle)*2;this.y+=Math.sin(angle)*2}}draw(){ctx.beginPath();ctx.arc(this.x,this.y,this.r,0,Math.PI*2);ctx.fillStyle='rgba(30,144,255,0.7)';ctx.fill()}}
+let particles=[];for(let i=0;i<100;i++)particles.push(new Particle());
+function animate(){ctx.clearRect(0,0,canvas.width,canvas.height);for(let i=0;i<particles.length;i++){particles[i].move();particles[i].draw();for(let j=i+1;j<particles.length;j++){let dx=particles[i].x-particles[j].x;let dy=particles[i].y-particles[j].y;let dist=Math.sqrt(dx*dx+dy*dy);if(dist<120){ctx.beginPath();ctx.strokeStyle=`rgba(30,144,255,${1-dist/120})`;ctx.lineWidth=1;ctx.moveTo(particles[i].x,particles[i].y);ctx.lineTo(particles[j].x,particles[j].y);ctx.stroke()}}}requestAnimationFrame(animate)}
+animate();
+const aboutCard=document.getElementById('aboutCard');
+const linkCard=document.getElementById('linkCard');
+document.addEventListener('mousemove',e=>{const x=(e.clientX-window.innerWidth/2)/30;const y=(e.clientY-window.innerHeight/2)/30;aboutCard.style.transform=`translate(${x}px, ${y}px)`;linkCard.style.transform=`translate(${x}px, ${y}px)`});
+window.addEventListener('resize',()=>{canvas.width=window.innerWidth;canvas.height=window.innerHeight});
+</script>
+</body>
+</html>
